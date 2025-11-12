@@ -8,6 +8,7 @@ import {
 	generateJSDocComment,
 	shouldIncludeField,
 	determineFieldType,
+	applyTypePrefix,
 } from './utils';
 
 export const DEFAULT_DIRECTUS_URL = 'http://localhost:8055';
@@ -19,12 +20,14 @@ export const DEFAULT_DIRECTUS_URL = 'http://localhost:8055';
  * @param {string} options.outputPath - Path to the output file.
  * @param {string} options.directusUrl - URL of the Directus API.
  * @param {string} options.directusToken - Token for the Directus API.
+ * @param {string} options.typePrefix - Prefix to add to all generated type names.
  * @returns {Promise<string>} - A promise that resolves to the generated TypeScript types.
  */
 export async function generateDirectusTypes({
 	outputPath = '',
 	directusUrl = DEFAULT_DIRECTUS_URL,
 	directusToken = 'admin',
+	typePrefix = '',
 }): Promise<string> {
 	try {
 		const api = new ApiClient(directusUrl, directusToken);
@@ -43,15 +46,18 @@ export async function generateDirectusTypes({
 
 		for (const collection of Object.values(collections)) {
 			const isSingleton = collection.meta?.singleton;
-			const typeName = pascalCase(
-				isSingleton ? collection.collection : singularize(collection.collection),
+			const typeName = applyTypePrefix(
+				pascalCase(
+					isSingleton ? collection.collection : singularize(collection.collection),
+				),
+				typePrefix,
 			);
 
 			output += `export interface ${typeName} {\n`;
 
 			for (const field of collection.fields.filter(shouldIncludeField)) {
 				const jsDocComment = generateJSDocComment(field);
-				const fieldType = determineFieldType(field);
+				const fieldType = determineFieldType(field, typePrefix);
 				const isRequired = field.schema?.is_primary_key || field.meta?.required;
 				const isNullable = field.schema?.is_nullable && !isRequired;
 				const fieldName = /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(field.field)
@@ -70,8 +76,11 @@ export async function generateDirectusTypes({
 
 		for (const collection of Object.values(collections)) {
 			const isSingleton = collection.meta?.singleton;
-			const typeName = pascalCase(
-				isSingleton ? collection.collection : singularize(collection.collection),
+			const typeName = applyTypePrefix(
+				pascalCase(
+					isSingleton ? collection.collection : singularize(collection.collection),
+				),
+				typePrefix,
 			);
 			output += `\t${collection.collection}: ${typeName}${isSingleton ? '' : '[]'};\n`;
 		}

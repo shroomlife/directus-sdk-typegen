@@ -100,6 +100,17 @@ npx directus-sdk-typegen --url <DIRECTUS_API_URL> --token <DIRECTUS_API_TOKEN> -
 - `-o, --output <path>`: Specify the output file path including filename (default: `./directus-schema.ts`).
 - `-u, --url <url>`: Directus API URL (default: `http://localhost:8055`).
 - `-t, --token <token>`: Directus API token. Needs Adminstrator permissions (default: `your-token-here`).
+- `--type-prefix <prefix>`: Prefix to add to all generated type names (default: `''`). Useful for avoiding naming conflicts with other types in your project.
+
+#### Example with Type Prefix
+
+If you want to prefix all generated types with `Directus` to avoid naming conflicts:
+
+```bash
+npx directus-sdk-typegen --url http://localhost:8055 --token your-token-here --output ./my-schema.ts --type-prefix=Directus
+```
+
+This will generate types like `DirectusComponent`, `DirectusEvent`, etc., instead of `Component`, `Event`, etc. The prefix is also applied to all type references in relationships, ensuring type safety throughout your schema.
 
 ### Library Usage
 
@@ -115,6 +126,7 @@ async function generateTypes() {
             outputPath: './my-schema.ts',
             directusUrl: 'http://localhost:8055',
             directusToken: 'your-token-here',
+            typePrefix: 'Directus', // Optional: prefix all type names
         });
     } catch (error) {
         console.error('Failed to generate types:', error);
@@ -132,6 +144,15 @@ async function generateTypes() {
     try {
         const types = await generateDirectusTypes({
             directusUrl: 'http://localhost:8055',
+            directusToken: 'your-token-here',
+            typePrefix: 'Directus', // Optional: prefix all type names
+        });
+        // Do something else with the types
+        console.log(types);
+    } catch (error) {
+        console.error('Failed to generate types:', error);
+    }
+}
             directusToken: 'your-token-here',
         });
         // Do something else with the types

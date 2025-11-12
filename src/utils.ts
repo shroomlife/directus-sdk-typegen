@@ -14,6 +14,17 @@ export function pascalCase(value: string): string {
 		.join('');
 }
 
+/**
+ * Applies a prefix to a type name if the prefix is provided.
+ *
+ * @param typeName - The base type name.
+ * @param prefix - The prefix to add (optional).
+ * @returns The type name with prefix if provided, otherwise the original type name.
+ */
+export function applyTypePrefix(typeName: string, prefix = ''): string {
+	return prefix ? `${prefix}${typeName}` : typeName;
+}
+
 export function singularize(word: string): string {
 	if (!word || typeof word !== 'string') return '';
 
@@ -72,7 +83,7 @@ export function shouldIncludeField(field: any): boolean {
 	return !(isPresentationField || isNonRelationalAlias || isGroup);
 }
 
-export function determineFieldType(field: any): string {
+export function determineFieldType(field: any, typePrefix = ''): string {
 	// Handle extensions like SEO type
 	if (isSEOField(field)) {
 		return seoTypeName;
@@ -82,13 +93,19 @@ export function determineFieldType(field: any): string {
 	if (field.meta?.special?.includes('translations')) {
 		const translationsCollection = field.relation?.collection;
 		if (translationsCollection) {
-			const translationType = pascalCase(singularize(translationsCollection));
+			const translationType = applyTypePrefix(
+				pascalCase(singularize(translationsCollection)),
+				typePrefix,
+			);
 			return `${translationType}[] | null`;
 		}
 	}
 
 	if (field.relation?.collection) {
-		const relatedTypeName = pascalCase(singularize(field.relation.collection));
+		const relatedTypeName = applyTypePrefix(
+			pascalCase(singularize(field.relation.collection)),
+			typePrefix,
+		);
 
 		if (field.relation.type === 'many') {
 			// Handle one-to-many relations
@@ -100,7 +117,9 @@ export function determineFieldType(field: any): string {
 			const allowedCollections = field.relation.allowedCollections;
 			if (Array.isArray(allowedCollections) && allowedCollections.length > 0) {
 				const unionTypes = allowedCollections
-					.map((collection) => `${pascalCase(singularize(collection))}`)
+					.map((collection) =>
+						applyTypePrefix(pascalCase(singularize(collection)), typePrefix),
+					)
 					.join(' | ');
 				return `${unionTypes} | string`;
 			}
@@ -134,7 +153,7 @@ export function determineFieldType(field: any): string {
 
 			if (Array.isArray(nestedFields) && nestedFields.length > 0) {
 				const nestedTypes = nestedFields.map((nestedField: any) => {
-					const fieldType = determineFieldType(nestedField); // Reuse the same function
+					const fieldType = determineFieldType(nestedField, typePrefix); // Reuse the same function with typePrefix
 					return `${nestedField.field}: ${fieldType}`;
 				});
 
