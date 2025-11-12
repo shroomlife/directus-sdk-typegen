@@ -9,7 +9,7 @@ function runCLI() {
 		.description(
 			'CLI and library to generate TypeScript types from Directus collections for use with Directus SDK.',
 		)
-		.version('0.1.2')
+		.version('0.2.1')
 		.option(
 			'-o, --output <path>',
 			'Output file path including filename',

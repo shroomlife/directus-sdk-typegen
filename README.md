@@ -164,6 +164,30 @@ async function generateTypes() {
 ```
 
 
+## Troubleshooting
+
+### "unknown option '--type-prefix'" error
+
+If you encounter an error like `error: unknown option '--type-prefix'`, this typically means one of the following:
+
+1. **Using an outdated version from npm**: If you're running `bunx directus-sdk-typegen` or have globally installed the package, you might be using an older version that doesn't include the `--type-prefix` option. Make sure you're using version 0.2.1 or later:
+   ```bash
+   npx directus-sdk-typegen@latest --version
+   ```
+
+2. **Local repository not built**: If you're running from a cloned repository, make sure to build the TypeScript source after pulling updates:
+   ```bash
+   npm install
+   npm run build
+   ```
+
+3. **Check your version**: Verify that you're using a version that includes this feature:
+   ```bash
+   directus-sdk-typegen --version
+   # or
+   npx directus-sdk-typegen --version
+   ```
+
 ## Contributing
 
 Happy to accept contributions that improve the types generated! But please open an issue first to discuss changes.
