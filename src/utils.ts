@@ -16,12 +16,12 @@ export function pascalCase(value: string): string {
 
 /**
  * Applies a prefix to a type name if the prefix is provided.
- * 
+ *
  * @param typeName - The base type name.
  * @param prefix - The prefix to add (optional).
  * @returns The type name with prefix if provided, otherwise the original type name.
  */
-export function applyTypePrefix(typeName: string, prefix: string = ''): string {
+export function applyTypePrefix(typeName: string, prefix = ''): string {
 	return prefix ? `${prefix}${typeName}` : typeName;
 }
 
@@ -83,7 +83,7 @@ export function shouldIncludeField(field: any): boolean {
 	return !(isPresentationField || isNonRelationalAlias || isGroup);
 }
 
-export function determineFieldType(field: any, typePrefix: string = ''): string {
+export function determineFieldType(field: any, typePrefix = ''): string {
 	// Handle extensions like SEO type
 	if (isSEOField(field)) {
 		return seoTypeName;

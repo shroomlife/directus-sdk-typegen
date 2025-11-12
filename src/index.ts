@@ -17,11 +17,7 @@ function runCLI() {
 		)
 		.option('-u, --url <url>', 'Directus API URL', 'http://localhost:8055')
 		.option('-t, --token <token>', 'Directus API token', 'your-token-here')
-		.option(
-			'--type-prefix <prefix>',
-			'Prefix to add to all generated type names',
-			'',
-		)
+		.option('--type-prefix <prefix>', 'Prefix to add to all generated type names', '')
 		.action(async (options) => {
 			try {
 				await generateDirectusTypes({
